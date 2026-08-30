@@ -1,0 +1,30 @@
+#!name=JAX - 闲鱼净化
+#!desc=隐私优先自托管版：拦截闲鱼开屏广告、广告曝光与部分推荐营销接口；无第三方脚本。2026-08-30
+
+# 设计原则：
+# - 无第三方 JS / Worker。
+# - 不读取 Cookie、聊天内容、订单、支付或账号 Token。
+# - 仅 MITM acs.m.goofish.com 与 g-acs.m.goofish.com；不使用 *.goofish.com。
+# - 若特别在意购物核心 API 的本机解密范围，可只保留 [Rule] 并停用本模块。
+
+[Rule]
+DOMAIN,iyes.youku.com,REJECT
+
+[Map Local]
+# 开屏广告
+^https?:\/\/(?:g-)?acs\.m\.goofish\.com\/gw\/mtop.*splash\.ads data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+# 通用广告曝光
+^https?:\/\/(?:g-)?acs\.m\.goofish\.com\/gw\/mtop\.idle\.ad\.expose data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+# 消息页“感兴趣推荐”
+^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.playboy\.recommend\/1\.0 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+# 搜索页推荐词/发现推荐
+^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlemtopsearch\.search\.discover\/1\.0 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+# “这些宝贝超好卖”等营销推荐
+^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.item\.resell\.recommendorhotcate\/1\.0 data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% acs.m.goofish.com,g-acs.m.goofish.com
