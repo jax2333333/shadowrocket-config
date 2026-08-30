@@ -1,0 +1,25 @@
+#!name=JAX - 七猫小说去广告
+#!desc=隐私优先自托管版：仅广告/追踪净化，不包含会员/VIP/付费内容解锁。2026-08-30
+
+# 设计原则：
+# - 不使用远程 JS、签到脚本或外部 Worker。
+# - 不修改会员状态、不绕过付费内容。
+# - 只拦截已知广告 SDK 请求。
+
+[URL Rewrite]
+^https?:\/\/open\.e\.kuaishou\.cn\/rest\/e\/v3\/open\/univ - reject
+^https?:\/\/api-access\.pangolin-sdk-toutiao-b\.com\/api\/ad\/union\/sdk\/get_ads - reject
+^https?:\/\/api-access\.(?:pangolin-sdk-toutiao|pangolin-sdk-toutiao1)\.com\/api\/ad - reject
+^https?:\/\/dsp-x\.jd\.com\/adx\/sdk - reject
+
+[Rule]
+DOMAIN,p1-lm.adukwai.com,REJECT
+DOMAIN-SUFFIX,adukwai.com,REJECT
+DOMAIN,open.e.kuaishou.cn,REJECT
+DOMAIN,api-access.pangolin-sdk-toutiao-b.com,REJECT
+DOMAIN,api-access.pangolin-sdk-toutiao.com,REJECT
+DOMAIN,api-access.pangolin-sdk-toutiao1.com,REJECT
+DOMAIN,dsp-x.jd.com,REJECT
+
+[MITM]
+hostname = %APPEND% open.e.kuaishou.cn,api-access.pangolin-sdk-toutiao-b.com,api-access.pangolin-sdk-toutiao.com,api-access.pangolin-sdk-toutiao1.com,dsp-x.jd.com
