@@ -11,7 +11,7 @@
 - 不调用外部 Worker / API
 - 不读取或上传 Cookie、账号、Token、播放 URL、设备密钥
 - 不使用全局 `hostname = *` MITM
-- 只在确实需要 URL Rewrite 时追加最小 MITM 域名
+- 只在确实需要 URL Rewrite / Map Local 时追加最小 MITM 域名
 - 主配置与功能模块分离，出问题可单独停用
 
 ## 已生成模块
@@ -24,7 +24,95 @@
 
 `scripts/youtube-adblock-local.js`
 
-这是唯一需要自写 JS 的模块；脚本不主动联网。
+这是当前唯一需要自写 JS 的模块；脚本不主动联网。
+
+### 微信公众号
+
+`modules/wechat-article-clean.module`
+
+只处理公众号文章广告与商品推广接口：
+
+- MITM：`mp.weixin.qq.com`
+- 不包含 `*.weixin.qq.com`
+- 不处理聊天、语音、登录、支付等微信核心流量
+- 无 Script
+
+### 小红书
+
+`modules/xiaohongshu-clean.module`
+
+拦截广告素材、惊喜弹窗、营销盒子及少量明确推广入口：
+
+- MITM：`edith.xiaohongshu.com`、`www.xiaohongshu.com`
+- 不 MITM `rec` / `so` / `ci` 等更多主机
+- 不处理登录、私信、发布、支付
+- 无 Script
+
+由于不再运行社区版的小红书远程 JS，搜索页与信息流深度净化覆盖率会低一些，但供应链和隐私风险更低。
+
+### 微博
+
+`modules/weibo-clean.module`
+
+轻量纯规则版：
+
+- 无 MITM
+- 无 Script
+- 只拦截开屏广告、广告素材、广告投放与统计追踪专用域名
+- 不解密 `api.weibo.cn` / `*.weibo.com`
+- 不涉及会员功能
+
+### 高德地图
+
+`modules/amap-clean.module`
+
+只处理开屏广告和营销增值接口：
+
+- MITM：`m5.amap.com`
+- 不拦截整个 `amap.com`
+- 不修改导航、路线规划、实时路况规则
+- 无 Script
+
+如发现某个“增值服务”被误伤，可直接关闭此模块，不影响主配置。
+
+### 淘宝
+
+`modules/taobao-clean.module`
+
+隐私优先轻量版：
+
+- 主要阻断明确广告投放 / 统计域名
+- MITM：仅 `guide-acs.m.taobao.com`
+- 特意不 MITM `acs.m.taobao.com` 核心 API
+- 不读取订单、支付、账号 Cookie / Token
+- 无 Script
+
+因此它不会像大型社区模块那样深度清理所有首页信息流广告，但本机解密范围明显更小。
+
+### 京东
+
+`modules/jd-clean.module`
+
+纯规则版：
+
+- 无 MITM
+- 无 Script
+- 只拦截明确广告投放与统计域名
+- 不 MITM `api.m.jd.com`
+- 不拦截 `dns.jd.com`
+- 不修改价格、订单、会员或支付数据
+
+### 闲鱼
+
+`modules/xianyu-clean.module`
+
+去开屏、广告曝光与部分营销推荐：
+
+- MITM：`acs.m.goofish.com`、`g-acs.m.goofish.com`
+- 无 Script
+- 不读取或上传聊天、订单、支付、Cookie、Token
+
+注意：闲鱼大量业务共用 `acs` 主机，因此开启该模块时 Shadowrocket 会在本机解密这两个主机的 HTTPS 流量。规则本身不会把数据发送到外部服务器，但如果你希望“零购物核心 API MITM”，应关闭此模块，只使用通用广告模块。
 
 ### 番茄小说
 
@@ -83,6 +171,26 @@
 
 不修改会员状态，不绕过订阅或 App 内购买。
 
+## 当前 MITM 范围
+
+启用对应模块时才追加：
+
+- YouTube：`*.googlevideo.com`、`youtubei.googleapis.com` 等 YouTube 专用主机
+- 微信公众号：`mp.weixin.qq.com`
+- 小红书：`edith.xiaohongshu.com`、`www.xiaohongshu.com`
+- 高德：`m5.amap.com`
+- 淘宝：`guide-acs.m.taobao.com`
+- 闲鱼：`acs.m.goofish.com`、`g-acs.m.goofish.com`
+
+以下新增模块不需要 MITM：
+
+- 微博
+- 京东
+- 通用广告
+- 开屏广告
+- WEBTOON
+- 豌豆清单
+
 ## 为什么不直接镜像原模块
 
 仅把第三方 `.module` 或 `.js` 原样复制到自己的 GitHub，只解决“上游以后偷偷改代码”的供应链风险，不能自动解决以下问题：
@@ -110,13 +218,14 @@
 
 ## 推荐启用顺序
 
-1. 先保留 YouTube 自托管模块。
-2. 安装 `general-adblock-safe.module`，测试 1 天。
-3. 如果仍有明显开屏广告，再加 `splash-adblock-safe.module`。
-4. 番茄 / 七猫 / WEBTOON 按实际使用需求单独开启。
-5. 豌豆清单只有在需要减少广告追踪时开启。
+1. 保留已经稳定的 YouTube 自托管模块。
+2. 安装 `general-adblock-safe.module`，先测试日常 App。
+3. 按需开启微信公众号、微博、京东这类较低风险模块。
+4. 小红书、高德、淘宝逐个开启，每开启一个测试对应 App。
+5. 闲鱼最后开启，因为它需要 MITM 两个业务核心 `acs` 主机。
+6. 番茄 / 七猫 / WEBTOON / 豌豆按实际使用需求单独开启。
 
-这样比一次性启用全部模块更容易定位兼容性问题。
+不要一次性启用全部模块。逐个安装、逐个测试更容易定位兼容性问题。
 
 ## 安全原则
 
