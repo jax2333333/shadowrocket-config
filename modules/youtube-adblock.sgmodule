@@ -1,11 +1,12 @@
 #!name=JAX - YouTube AdBlock
-#!desc=YouTube / YouTube Music 去广告实验模块；独立于主配置，可随时关闭。2026-08-30
+#!desc=隐私优先自托管版：YouTube / YouTube Music 去广告实验模块；不调用第三方脚本或外部 Worker。2026-08-30
 
-# 说明：
-# 1. 本模块只追加 YouTube 相关 MITM 主机名，不覆盖主配置。
-# 2. 需要在 Shadowrocket 中开启 HTTPS 解密，并在 iOS 中安装/完全信任 Shadowrocket CA。
-# 3. 脚本使用固定 commit 的第三方镜像，避免上游 main 分支变化导致行为漂移。
-# 4. 脚本来源说明见 docs/youtube-adblock-ios.md。
+# 安全设计：
+# 1. 主配置不改，本模块可随时单独关闭。
+# 2. JS 脚本托管在 jax2333333/shadowrocket-config 自己的仓库。
+# 3. 脚本不使用 fetch / $httpClient / $task.fetch，不主动向第三方服务器发送数据。
+# 4. 不使用持久化缓存，不读取/上传 Cookie、账号信息或播放密钥。
+# 5. 仅处理 Shadowrocket 本机已经截获的 YouTube protobuf 响应。
 
 [Rule]
 # 阻断 YouTube QUIC/UDP，让相关流量回落到可被 HTTPS 解密处理的 TCP。
@@ -13,7 +14,7 @@ AND,((DOMAIN-SUFFIX,googlevideo.com),(PROTOCOL,UDP)),REJECT
 AND,((DOMAIN,youtubei.googleapis.com),(PROTOCOL,UDP)),REJECT
 
 [URL Rewrite]
-# 过滤常见广告追踪/广告播放请求。
+# 常见广告播放/统计请求。此部分不依赖 JS。
 (^https?://[\w-]+\.googlevideo\.com/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) $1$2$3 302
 ^https?://[\w-]+\.googlevideo\.com/(?!(?:dclk_video_ads|videoplayback\?)).+&oad _ reject-200
 ^https?://(?:www|s)\.youtube\.com/api/stats/ads _ reject-200
@@ -21,10 +22,14 @@ AND,((DOMAIN,youtubei.googleapis.com),(PROTOCOL,UDP)),REJECT
 ^https?://s\.youtube\.com/api/stats/qoe\?adcontext _ reject-200
 
 [Script]
-# 固定版本：akiralereal/shadowrocket-toolkit@338320b364a0d6fb60fdeb60bb0407627085119b
-# 其 youtube-response.js 基于 Maasea/sgmodule 的 YouTube 响应处理脚本。
-youtube_response = type=http-response,pattern=^https://youtubei\.googleapis\.com/youtubei/v1/(?:browse|next|player|search|reel/reel_watch_sequence|guide|account/get_setting|get_watch)(?:[/?#]|$),requires-body=1,max-size=-1,binary-body-mode=1,script-path=https://raw.githubusercontent.com/akiralereal/shadowrocket-toolkit/338320b364a0d6fb60fdeb60bb0407627085119b/scripts/youtube-response.js,argument="{}"
+# 自写、自己托管的本地 protobuf 过滤器：
+# - player：删除 adPlacements(field 7)、adSlots(field 68)
+# - playbackTracking：删除 pageadViewthroughconversion(field 18)
+# - get_watch：递归处理其中的 player
+# - Shorts：删除 adClientParams.isAd=true 的条目
+# - 解析异常时原样放行，优先保证正常播放
+youtube_adblock_local = type=http-response,pattern=^https://youtubei\.googleapis\.com/youtubei/v1/(?:player|get_watch|reel/reel_watch_sequence)(?:[/?#]|$),requires-body=1,max-size=-1,binary-body-mode=1,script-path=https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/scripts/youtube-adblock-local.js
 
 [MITM]
-# %APPEND% 很重要：仅追加这些域名，不覆盖其他模块或主配置中的 MITM hostname。
+# %APPEND% 仅追加 YouTube 所需域名，不覆盖主配置/其他模块。
 hostname = %APPEND% -redirector*.googlevideo.com,*.googlevideo.com,s.youtube.com,www.youtube.com,youtubei.googleapis.com
