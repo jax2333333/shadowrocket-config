@@ -1,0 +1,40 @@
+#!name=JAX - 开屏广告拦截
+#!desc=隐私优先轻量版：常见开屏/广告 SDK 域名拦截；无远程 JS、无外部 Worker、无全局 MITM。2026-08-30
+
+# 这是对 adultraplus 类模块的安全化替代：
+# - 优先用域名规则，不解密不必要的 HTTPS。
+# - 效果可能少于大型社区规则，但隐私边界更清晰、误伤更少。
+
+[Rule]
+# ByteDance / Pangle 常见广告资源
+DOMAIN-KEYWORD,-ad-sign.byteimg.com,REJECT
+DOMAIN,pangolin.snssdk.com,REJECT
+DOMAIN,gromore.pangolin-sdk-toutiao.com,REJECT
+DOMAIN,ether-pack.pangolin-sdk-toutiao.com,REJECT
+DOMAIN-SUFFIX,pangle.io,REJECT
+DOMAIN-SUFFIX,pglstatp-toutiao.com,REJECT
+
+# Tencent GDT
+DOMAIN,mi.gdt.qq.com,REJECT
+DOMAIN,v.gdt.qq.com,REJECT
+DOMAIN-SUFFIX,gdt.qq.com,REJECT
+DOMAIN-SUFFIX,ugdtimg.com,REJECT
+
+# Kuaishou
+DOMAIN,open.e.kuaishou.com,REJECT
+DOMAIN,open.e.kuaishou.cn,REJECT
+DOMAIN-SUFFIX,adukwai.com,REJECT
+
+# Baidu Ads
+DOMAIN,mobads.baidu.com,REJECT
+DOMAIN-SUFFIX,baidustatic.com,REJECT
+
+# Generic mobile ad SDKs
+DOMAIN-SUFFIX,googlesyndication.com,REJECT
+DOMAIN-SUFFIX,doubleclick.net,REJECT
+DOMAIN-SUFFIX,applovin.com,REJECT
+DOMAIN-SUFFIX,vungle.com,REJECT
+DOMAIN-SUFFIX,ironsrc.com,REJECT
+DOMAIN-SUFFIX,supersonicads.com,REJECT
+DOMAIN-SUFFIX,mbridge.com,REJECT
+DOMAIN-SUFFIX,mintegral.com,REJECT
