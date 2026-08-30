@@ -1,0 +1,23 @@
+#!name=JAX - 微博净化
+#!desc=隐私优先轻量版：拦截微博开屏广告、广告素材与部分统计追踪；纯规则、无 MITM、无第三方脚本。2026-08-30
+
+# 设计原则：
+# - 只拦截明确广告/统计专用域名。
+# - 不 MITM api.weibo.cn / *.weibo.com。
+# - 不处理私信、登录、会员或支付接口。
+
+[Rule]
+DOMAIN,bootrealtime.uve.weibo.com,REJECT
+DOMAIN,bootpreload.uve.weibo.com,REJECT
+DOMAIN,fastimage.uve.weibo.com,REJECT
+DOMAIN,adimg.uve.weibo.com,REJECT
+DOMAIN,adimg.vue.weibo.com,REJECT
+DOMAIN,promote.biz.weibo.cn,REJECT
+DOMAIN,alitui.weibo.com,REJECT
+DOMAIN,click.uve.weibo.com,REJECT
+DOMAIN,wax.weibo.com,REJECT
+DOMAIN,dsp.edm.weibo.cn,REJECT
+DOMAIN,ad.weibo.com,REJECT
+DOMAIN,datacollection.uve.weibo.com,REJECT
+DOMAIN,adpinpai.video.weibocdn.com,REJECT
+DOMAIN,sdkapp.uve.weibo.com,REJECT
