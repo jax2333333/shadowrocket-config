@@ -5,11 +5,9 @@
  * - No fetch / $httpClient / $task.fetch / XMLHttpRequest.
  * - No persistent storage.
  * - Does not read or upload Cookie, Authorization, account data, device keys, URLs or headers.
- * - Only filters ad items already present in a TikTok JSON response intercepted locally by Shadowrocket.
+ * - Only filters ad items already present in TikTok Home Feed JSON intercepted locally by Shadowrocket.
+ * - Enabled only for https://api22-normal-c-alisg.tiktokv.com/aweme/v1/feed/ by the module.
  * - Fail-open: parse errors return the original response unchanged.
- *
- * This script is intentionally NOT enabled by modules/tiktok-clean.module yet.
- * It will be enabled only after real TikTok connection logs confirm the smallest safe API hostname set.
  */
 
 function isAdAweme(item) {
