@@ -1,0 +1,30 @@
+#!name=JAX - 番茄小说去广告
+#!desc=隐私优先自托管版：番茄小说/红果相关广告与追踪拦截；无第三方脚本、无外部 Worker。2026-08-30
+
+# 设计原则：
+# - 不使用远程 JS。
+# - 不读取 Cookie / Header / 账号信息。
+# - 不使用持久化存储。
+# - 避免拦截整个 bytedance.com / snssdk.com，降低误伤抖音、TikTok 和番茄核心接口的概率。
+
+[Rule]
+DOMAIN,p6-ad-sign.byteimg.com,REJECT
+DOMAIN,p9-ad-sign.byteimg.com,REJECT
+DOMAIN,mon.zijieapi.com,REJECT
+DOMAIN,toblog.ctobsnssdk.com,REJECT
+DOMAIN,mssdk.volces.com,REJECT
+DOMAIN,pangolin.snssdk.com,REJECT
+DOMAIN,gromore.pangolin-sdk-toutiao.com,REJECT
+DOMAIN,ether-pack.pangolin-sdk-toutiao.com,REJECT
+DOMAIN,api.iegadp.qq.com,REJECT
+DOMAIN,adim.pinduoduo.com,REJECT
+
+[URL Rewrite]
+^https?:\/\/[^/]+\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/sdk\/(?:get_ads|stats|settings)\/ - reject
+^https?:\/\/[^/]+\.(?:pglstatp-toutiao|pstatp)\.com\/(?:obj|img)\/(?:ad-app-package|ad)\/ - reject
+^https?:\/\/[^/]+\.(?:pglstatp-toutiao|pstatp)\.com\/obj\/ad-pattern\/renderer - reject
+^https?:\/\/[^/]+\.snssdk\.com\/api\/ad\/ - reject
+^https?:\/\/adim\.pinduoduo\.com\/.+\/toutiao\? - reject
+
+[MITM]
+hostname = %APPEND% *.pangolin-sdk-toutiao.com,*.pglstatp-toutiao.com,*.pstatp.com,*.snssdk.com,adim.pinduoduo.com
