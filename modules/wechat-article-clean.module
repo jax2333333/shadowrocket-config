@@ -1,0 +1,17 @@
+#!name=JAX - 微信公众号净化
+#!desc=隐私优先自托管版：净化公众号文章广告与商品推广；不处理聊天、登录、支付等微信核心流量。2026-08-30
+
+# 设计原则：
+# - 无第三方 JS / Worker。
+# - 不读取 Cookie、Token、聊天内容或账号信息。
+# - 仅 MITM mp.weixin.qq.com，不使用 *.weixin.qq.com。
+
+[Map Local]
+# 公众号文章广告接口
+^https?:\/\/mp\.weixin\.qq\.com\/mp\/getappmsgad(?:\?|$) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+# 公众号文章商品推广接口
+^https?:\/\/mp\.weixin\.qq\.com\/mp\/cps_product_info\?action data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% mp.weixin.qq.com
