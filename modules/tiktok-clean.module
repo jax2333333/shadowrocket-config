@@ -1,0 +1,52 @@
+#!name=JAX - TikTok Clean
+#!desc=隐私优先自托管版：TikTok 广告域名、广告落地页与统计日志净化；首版不启用 MITM，不解密登录/私信/上传等核心 API。2026-08-30
+
+# 安全设计：
+# 1. 不使用第三方 JS / Worker / API。
+# 2. 当前版本仅使用域名规则，不启用 MITM。
+# 3. 不读取 Cookie、Authorization、账号信息、设备密钥或视频内容。
+# 4. 不拦截 TikTok 视频 CDN，不影响视频传输路径。
+# 5. 不拦截 mssdk / location / frontier 等可能参与账号安全、定位或实时通信的主机。
+# 6. 后续若启用推荐流去广告，只对实际日志确认过的 API 主机启用最小 MITM。
+
+[Rule]
+# TikTok 独立广告投放主机
+DOMAIN-SUFFIX,ads-service.tiktok.com,REJECT
+DOMAIN,ads.tiktok.com,REJECT
+DOMAIN,ads-api.tiktok.com,REJECT
+DOMAIN,ads-frontier.tiktok.com,REJECT
+DOMAIN,ads-sg.tiktok.com,REJECT
+DOMAIN,ads-ru.tiktok.com,REJECT
+DOMAIN,ads.us.tiktok.com,REJECT
+DOMAIN,ads-ttp2.us.tiktok.com,REJECT
+DOMAIN,ads-sg.business-tiktok.com,REJECT
+DOMAIN,ads-va.business-tiktok.com,REJECT
+DOMAIN,p16-ad.byteoversea.com,REJECT
+DOMAIN,v16-ad.byteoversea.com,REJECT
+DOMAIN,ad.tiktokv.com,REJECT
+DOMAIN,ad.tiktokv.us,REJECT
+
+# TikTok 广告格式 / 广告落地页主机
+AND,((DOMAIN-KEYWORD,ad-format),(OR,((DOMAIN-SUFFIX,tiktokv.com),(DOMAIN-SUFFIX,tiktokv.us),(DOMAIN-SUFFIX,tiktokv.eu)))),REJECT
+AND,((DOMAIN-KEYWORD,ad-instantpage),(OR,((DOMAIN-SUFFIX,tiktokv.com),(DOMAIN-SUFFIX,tiktokv.us),(DOMAIN-SUFFIX,tiktokv.eu)))),REJECT
+AND,((DOMAIN-KEYWORD,adinstantpage),(OR,((DOMAIN-SUFFIX,tiktokv.com),(DOMAIN-SUFFIX,tiktokv.us),(DOMAIN-SUFFIX,tiktokv.eu)))),REJECT
+
+# TikTok 统计 / 遥测；不碰业务 API
+AND,((DOMAIN-KEYWORD,analytics),(DOMAIN-SUFFIX,tiktok.com)),REJECT
+AND,((DOMAIN-KEYWORD,analytics),(DOMAIN-SUFFIX,tiktokw.eu)),REJECT
+AND,((DOMAIN-KEYWORD,analytics),(DOMAIN-SUFFIX,tiktokw.us)),REJECT
+
+# TikTok App 日志与监控主机
+AND,((DOMAIN-KEYWORD,log),(OR,((DOMAIN-SUFFIX,tiktokv.com),(DOMAIN-SUFFIX,tiktokv.us),(DOMAIN-SUFFIX,tiktokv.eu)))),REJECT
+AND,((DOMAIN-KEYWORD,mon),(OR,((DOMAIN-SUFFIX,tiktokv.com),(DOMAIN-SUFFIX,tiktokv.us),(DOMAIN-SUFFIX,tiktokv.eu)))),REJECT
+
+# ByteDance 海外统计/日志（保留 frontier / mssdk 等业务或安全主机）
+DOMAIN,log.byteoversea.com,REJECT
+DOMAIN,mon.byteoversea.com,REJECT
+AND,((DOMAIN-KEYWORD,gplog),(DOMAIN-SUFFIX,byteoversea.com)),REJECT
+AND,((DOMAIN-KEYWORD,gpm-mon),(DOMAIN-SUFFIX,byteoversea.com)),REJECT
+AND,((DOMAIN-KEYWORD,xlog),(DOMAIN-SUFFIX,byteoversea.com)),REJECT
+
+# 当前稳定版故意没有 [MITM] / [Script]。
+# 推荐流广告的本地过滤脚本已自托管在 scripts/tiktok-clean-local.js，
+# 等实际连接日志确认 API 主机后再通过模块更新启用。
