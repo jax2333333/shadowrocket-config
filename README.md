@@ -20,6 +20,48 @@ Shadowrocket 中可直接使用上述 Raw 地址更新配置；仓库后续提�
 - Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/youtube-adblock.sgmodule`
 - 教程：`docs/youtube-adblock-ios.md`
 
+### 微信公众号净化
+
+- 模块：`modules/wechat-article-clean.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/wechat-article-clean.module`
+- 只处理 `mp.weixin.qq.com` 的公众号文章广告/商品推广，不处理聊天、登录、支付。
+
+### 小红书净化
+
+- 模块：`modules/xiaohongshu-clean.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/xiaohongshu-clean.module`
+- 广告素材、惊喜弹窗、营销盒子与部分推广入口；无第三方脚本。
+
+### 微博净化
+
+- 模块：`modules/weibo-clean.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/weibo-clean.module`
+- 轻量纯规则，无 MITM；主要拦截开屏广告、广告素材与统计追踪专用域名。
+
+### 高德地图净化
+
+- 模块：`modules/amap-clean.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/amap-clean.module`
+- 只处理开屏广告和营销增值接口，不改导航、路线、实时路况规则。
+
+### 淘宝净化
+
+- 模块：`modules/taobao-clean.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/taobao-clean.module`
+- 不 MITM `acs.m.taobao.com` 核心 API，只处理广告投放域名及 `guide-acs` 开屏营销接口。
+
+### 京东净化
+
+- 模块：`modules/jd-clean.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/jd-clean.module`
+- 轻量纯规则，无 MITM；不解密 `api.m.jd.com`，不修改订单、价格或支付数据。
+
+### 闲鱼净化
+
+- 模块：`modules/xianyu-clean.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/xianyu-clean.module`
+- 去开屏、广告曝光与部分推荐营销；无第三方脚本。
+
 ### 番茄小说去广告
 
 - 模块：`modules/fanqie-adblock.module`
@@ -58,7 +100,7 @@ Shadowrocket 中可直接使用上述 Raw 地址更新配置；仓库后续提�
 
 - `docs/privacy-modules.md`
 
-所有新增模块都优先采用 **自写 / 自托管 / 最小 MITM** 原则：能用 Rule/Rewrite 完成的功能不引入 JavaScript；不会调用第三方 Worker 或 API，也不会主动上传 Cookie、账号信息、Token、播放 URL 或设备密钥。
+所有新增模块都优先采用 **自写 / 自托管 / 最小 MITM** 原则：能用 Rule / Map Local / Rewrite 完成的功能不引入 JavaScript；不会调用第三方 Worker 或 API，也不会主动上传 Cookie、账号信息、Token、播放 URL 或设备密钥。
 
 ## 当前版本
 
