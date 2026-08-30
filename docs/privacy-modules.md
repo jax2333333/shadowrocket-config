@@ -11,7 +11,7 @@
 - 不调用外部 Worker / API
 - 不读取或上传 Cookie、账号、Token、播放 URL、设备密钥
 - 不使用全局 `hostname = *` MITM
-- 只在确实需要 URL Rewrite / Map Local 时追加最小 MITM 域名
+- 只在确实需要 URL Rewrite / Map Local / 本地响应过滤时追加最小 MITM 域名
 - 主配置与功能模块分离，出问题可单独停用
 
 ## 已生成模块
@@ -30,23 +30,25 @@
 
 `modules/tiktok-clean.module`
 
-当前稳定版采用纯 Rule：
+当前版本基于 2026-08-30 两份实机 Shadowrocket 连接日志进行第二阶段收紧：
 
-- 拦截 TikTok 明确广告投放主机、广告落地页、analytics、log、mon 等统计/遥测主机
-- 不拦截视频 CDN
-- 不拦截 `mssdk`、`location`、`frontier` 等可能涉及账号安全、定位或实时通信的主机
-- **当前不启用 MITM**，因此不会解密 TikTok 登录、私信、上传、支付等核心 API
-- 无正在执行的 Script
+- 独立广告投放主机继续直接拦截。
+- 第一版对 `log* / mon*` 的硬拦截已经取消。日志中 `mon16-normal-alisg.tiktokv.com` 在约 9 分钟内被 REJECT 210 次，`log*` 被 REJECT 54 次，说明硬拦截会触发明显重试，可能增加请求量、耗电和后台流量。
+- 实机实际出现的 Home Feed 主机为 `api22-normal-c-alisg.tiktokv.com`；公开 TikTok API 实现也将该主机的 `/aweme/v1/feed/` 对应为 Home Feed。
+- 仅对 `api22-normal-c-alisg.tiktokv.com` 开启 MITM，不使用 `*.tiktokv.com`。
+- 仅该主机的 UDP/QUIC 被拒绝，使它回落 HTTPS/TCP；视频 CDN 和其他 TikTok API 的 QUIC 不受影响。
+- Script 只匹配 `https://api22-normal-c-alisg.tiktokv.com/aweme/v1/feed/`。
+- 不 MITM `api22-core-c-alisg`、`api16-normal-c-alisg`、`search*`、`webcast*`、`frontier*`、`mssdk*`、视频 CDN 等其他主机。
 
-已经准备自写本地过滤器：
+自写本地过滤器：
 
 `scripts/tiktok-clean-local.js`
 
-以及回归测试：
+回归测试：
 
 `tests/tiktok-clean-local.test.js`
 
-本地过滤器只识别 TikTok JSON 推荐流里明确标记 `is_ads / is_ad` 的项目；不修改下载权限、地区、会员、账号状态或其他业务字段。脚本当前故意不在模块中启用，等实际连接日志确认最小 API hostname 后再决定是否启用 MITM。
+本地过滤器只删除推荐流 JSON 中明确标记 `is_ads / is_ad` 的项目；不修改地区、下载权限、账号状态、登录、私信、直播、上传、Shop / 支付或其他业务字段。脚本不使用 `fetch`、`$httpClient`、`$task.fetch`、`XMLHttpRequest` 或持久化存储，解析失败时返回原响应。
 
 ### 微信公众号
 
@@ -198,15 +200,15 @@
 启用对应模块时才追加：
 
 - YouTube：`*.googlevideo.com`、`youtubei.googleapis.com` 等 YouTube 专用主机
+- TikTok：仅 `api22-normal-c-alisg.tiktokv.com`，且 Script 只处理 `/aweme/v1/feed/`
 - 微信公众号：`mp.weixin.qq.com`
 - 小红书：`edith.xiaohongshu.com`、`www.xiaohongshu.com`
 - 高德：`m5.amap.com`
 - 淘宝：`guide-acs.m.taobao.com`
 - 闲鱼：`acs.m.goofish.com`、`g-acs.m.goofish.com`
 
-以下新增模块当前不需要 MITM：
+以下新增模块不需要 MITM：
 
-- TikTok 稳定版
 - 微博
 - 京东
 - 通用广告
@@ -243,7 +245,7 @@
 
 1. 保留已经稳定的 YouTube 自托管模块。
 2. 安装 `general-adblock-safe.module`，先测试日常 App。
-3. TikTok 先使用 `tiktok-clean.module` 的无 MITM 稳定版，确认播放、登录、评论、私信正常。
+3. TikTok v2 更新后重点测试首页推荐流、搜索、评论、个人主页、私信和直播；如推荐流无法加载，先关闭 TikTok 模块并保留主配置。
 4. 按需开启微信公众号、微博、京东这类较低风险模块。
 5. 小红书、高德、淘宝逐个开启，每开启一个测试对应 App。
 6. 闲鱼最后开启，因为它需要 MITM 两个业务核心 `acs` 主机。
