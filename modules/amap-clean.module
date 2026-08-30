@@ -1,0 +1,22 @@
+#!name=JAX - 高德地图净化
+#!desc=隐私优先自托管版：拦截开屏广告与部分营销增值接口；不碰导航、路线、实时路况核心接口。2026-08-30
+
+# 设计原则：
+# - 无第三方 JS / Worker。
+# - 仅 MITM m5.amap.com。
+# - 不拦截整个 amap.com。
+
+[Rule]
+DOMAIN,optimus-ads.amap.com,REJECT
+AND,((DOMAIN,m5.amap.com),(PROTOCOL,UDP)),REJECT
+
+[Map Local]
+# 开屏广告配置
+^https?:\/\/m5\.amap\.com\/ws\/shield\/dsp\/app\/startup\/init\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[URL Rewrite]
+# 营销/增值入口
+^https?:\/\/m5\.amap\.com\/ws\/valueadded\/ - reject
+
+[MITM]
+hostname = %APPEND% m5.amap.com
