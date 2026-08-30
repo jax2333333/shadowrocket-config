@@ -1,0 +1,30 @@
+#!name=JAX - YouTube AdBlock
+#!desc=YouTube / YouTube Music 去广告实验模块；独立于主配置，可随时关闭。2026-08-30
+
+# 说明：
+# 1. 本模块只追加 YouTube 相关 MITM 主机名，不覆盖主配置。
+# 2. 需要在 Shadowrocket 中开启 HTTPS 解密，并在 iOS 中安装/完全信任 Shadowrocket CA。
+# 3. 脚本使用固定 commit 的第三方镜像，避免上游 main 分支变化导致行为漂移。
+# 4. 脚本来源说明见 docs/youtube-adblock-ios.md。
+
+[Rule]
+# 阻断 YouTube QUIC/UDP，让相关流量回落到可被 HTTPS 解密处理的 TCP。
+AND,((DOMAIN-SUFFIX,googlevideo.com),(PROTOCOL,UDP)),REJECT
+AND,((DOMAIN,youtubei.googleapis.com),(PROTOCOL,UDP)),REJECT
+
+[URL Rewrite]
+# 过滤常见广告追踪/广告播放请求。
+(^https?://[\w-]+\.googlevideo\.com/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) $1$2$3 302
+^https?://[\w-]+\.googlevideo\.com/(?!(?:dclk_video_ads|videoplayback\?)).+&oad _ reject-200
+^https?://(?:www|s)\.youtube\.com/api/stats/ads _ reject-200
+^https?://(?:www|s)\.youtube\.com/(?:pagead|ptracking) _ reject-200
+^https?://s\.youtube\.com/api/stats/qoe\?adcontext _ reject-200
+
+[Script]
+# 固定版本：akiralereal/shadowrocket-toolkit@338320b364a0d6fb60fdeb60bb0407627085119b
+# 其 youtube-response.js 基于 Maasea/sgmodule 的 YouTube 响应处理脚本。
+youtube_response = type=http-response,pattern=^https://youtubei\.googleapis\.com/youtubei/v1/(?:browse|next|player|search|reel/reel_watch_sequence|guide|account/get_setting|get_watch)(?:[/?#]|$),requires-body=1,max-size=-1,binary-body-mode=1,script-path=https://raw.githubusercontent.com/akiralereal/shadowrocket-toolkit/338320b364a0d6fb60fdeb60bb0407627085119b/scripts/youtube-response.js,argument="{}"
+
+[MITM]
+# %APPEND% 很重要：仅追加这些域名，不覆盖其他模块或主配置中的 MITM hostname。
+hostname = %APPEND% -redirector*.googlevideo.com,*.googlevideo.com,s.youtube.com,www.youtube.com,youtubei.googleapis.com
