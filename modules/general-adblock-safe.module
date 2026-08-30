@@ -1,0 +1,57 @@
+#!name=JAX - 通用广告拦截
+#!desc=隐私优先轻量版：常见广告 SDK / 追踪域名纯规则拦截，不需要脚本，不主动联网。2026-08-30
+
+# 与大型 NoAd/AdBlock 列表相比，本模块刻意保持轻量：
+# - 不使用外部脚本、远程 API、Worker。
+# - 不启用全局 MITM。
+# - 不拦截过宽的正常业务域名（如整个 unity3d.com / bytedance.com / qq.com）。
+
+[Rule]
+# Google Ads / DoubleClick
+DOMAIN-SUFFIX,googlesyndication.com,REJECT
+DOMAIN-SUFFIX,googleadservices.com,REJECT
+DOMAIN-SUFFIX,doubleclick.net,REJECT
+DOMAIN-SUFFIX,admob.com,REJECT
+
+# AppLovin
+DOMAIN-SUFFIX,applovin.com,REJECT
+DOMAIN-SUFFIX,applvn.com,REJECT
+
+# Vungle / Liftoff
+DOMAIN-SUFFIX,vungle.com,REJECT
+DOMAIN-SUFFIX,vungle.cn,REJECT
+
+# Unity Ads - 只拦广告相关主机关键词，不封整个 unity3d.com
+DOMAIN-KEYWORD,unityads,REJECT
+DOMAIN-SUFFIX,unityads.unity3d.com,REJECT
+
+# ironSource / LevelPlay
+DOMAIN-SUFFIX,ironsrc.com,REJECT
+DOMAIN-SUFFIX,supersonicads.com,REJECT
+
+# Mintegral / MBridge
+DOMAIN-SUFFIX,mbridge.com,REJECT
+DOMAIN-SUFFIX,mintegral.com,REJECT
+DOMAIN-SUFFIX,mtgglobals.com,REJECT
+
+# Pangle / 穿山甲
+DOMAIN-SUFFIX,pangle.io,REJECT
+DOMAIN-SUFFIX,pangolin-sdk-toutiao.com,REJECT
+DOMAIN-SUFFIX,pglstatp-toutiao.com,REJECT
+
+# Tencent GDT
+DOMAIN-SUFFIX,gdt.qq.com,REJECT
+DOMAIN-SUFFIX,ugdtimg.com,REJECT
+DOMAIN,mi.gdt.qq.com,REJECT
+DOMAIN,v.gdt.qq.com,REJECT
+
+# Kuaishou Ads
+DOMAIN-SUFFIX,adukwai.com,REJECT
+DOMAIN,open.e.kuaishou.com,REJECT
+DOMAIN,open.e.kuaishou.cn,REJECT
+
+# Umeng / common analytics trackers
+DOMAIN,cnlogs.umeng.com,REJECT
+DOMAIN,errlog.umeng.com,REJECT
+DOMAIN,ulogs.umeng.com,REJECT
+DOMAIN,log.umtrack.com,REJECT
