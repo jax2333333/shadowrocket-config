@@ -20,6 +20,15 @@ Shadowrocket 中可直接使用上述 Raw 地址更新配置；仓库后续提�
 - Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/youtube-adblock.sgmodule`
 - 教程：`docs/youtube-adblock-ios.md`
 
+### TikTok 净化
+
+- 模块：`modules/tiktok-clean.module`
+- 预备本地脚本：`scripts/tiktok-clean-local.js`
+- 回归测试：`tests/tiktok-clean-local.test.js`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/tiktok-clean.module`
+- 当前稳定版只拦截独立广告、广告落地页、统计与日志主机，**不启用 MITM**，不解密登录、私信、上传等核心 API。
+- 本地脚本只识别推荐流 JSON 中明确标记 `is_ads / is_ad` 的广告项；当前暂不启用，待实际连接日志确认最小 API 主机后再开启。
+
 ### 微信公众号净化
 
 - 模块：`modules/wechat-article-clean.module`
