@@ -20,14 +20,16 @@ Shadowrocket 中可直接使用上述 Raw 地址更新配置；仓库后续提�
 - Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/youtube-adblock.sgmodule`
 - 教程：`docs/youtube-adblock-ios.md`
 
-### TikTok 净化
+### TikTok 净化（最小 MITM + 自写 Script）
 
 - 模块：`modules/tiktok-clean.module`
-- 预备本地脚本：`scripts/tiktok-clean-local.js`
+- 自写脚本：`scripts/tiktok-clean-local.js`
 - 回归测试：`tests/tiktok-clean-local.test.js`
 - Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/tiktok-clean.module`
-- 当前稳定版只拦截独立广告、广告落地页、统计与日志主机，**不启用 MITM**，不解密登录、私信、上传等核心 API。
-- 本地脚本只识别推荐流 JSON 中明确标记 `is_ads / is_ad` 的广告项；当前暂不启用，待实际连接日志确认最小 API 主机后再开启。
+- 基于 2026-08-30 实机 Shadowrocket 日志，只对 `api22-normal-c-alisg.tiktokv.com` 开启 MITM，并且 Script 只匹配 `/aweme/v1/feed/`。
+- 推荐流本地过滤器只删除 JSON 中明确标记 `is_ads / is_ad` 的广告项，不修改地区、下载权限、账号状态、私信、上传、直播或支付数据。
+- 视频 CDN 与其他 TikTok API 的 QUIC 保持正常；仅 Feed API 的 UDP 被拒绝以回落 HTTPS/TCP 进入本机 MITM。
+- 第一版对 `log* / mon*` 的硬拦截已取消：实机日志发现它会导致 TikTok 高频重试，反而增加请求量与耗电。
 
 ### 微信公众号净化
 
