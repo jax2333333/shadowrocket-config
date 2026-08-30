@@ -12,18 +12,53 @@ Shadowrocket 中可直接使用上述 Raw 地址更新配置；仓库后续提�
 
 ## 独立模块
 
-### YouTube 去广告（MITM + Script）
+### YouTube 去广告（MITM + 自写 Script）
 
 - 模块：`modules/youtube-adblock.sgmodule`
 - 自写脚本：`scripts/youtube-adblock-local.js`
 - 回归测试：`tests/youtube-adblock-local.test.js`
-- 固定模块 Raw 地址：
-  `https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/youtube-adblock.sgmodule`
-- iPhone 安装教程：`docs/youtube-adblock-ios.md`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/youtube-adblock.sgmodule`
+- 教程：`docs/youtube-adblock-ios.md`
 
-当前为 **自写 / 自托管隐私优先版**：模块和 JS 都托管在本仓库，不再运行第三方远程 JS，不调用外部 Worker，不主动上传 Cookie、账号信息、播放 URL 或客户端密钥。脚本只处理 Shadowrocket 本机已截获的 YouTube protobuf 响应。
+### 番茄小说去广告
 
-该模块独立于主配置，可单独开启、关闭和更新；不会修改现有 YouTube 分流策略。需要开启 Shadowrocket HTTPS 解密并在 iOS 中安装、完全信任本机生成的 Shadowrocket CA 证书。
+- 模块：`modules/fanqie-adblock.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/fanqie-adblock.module`
+
+### 七猫小说去广告
+
+- 模块：`modules/qimao-adblock.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/qimao-adblock.module`
+- 仅广告/追踪净化，不包含会员、VIP、付费内容解锁。
+
+### 通用广告拦截
+
+- 模块：`modules/general-adblock-safe.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/general-adblock-safe.module`
+- 轻量纯规则，无 Script、无 MITM。
+
+### 开屏广告拦截
+
+- 模块：`modules/splash-adblock-safe.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/splash-adblock-safe.module`
+- 作为 adultraplus 类模块的隐私优先轻量替代。
+
+### WEBTOON 去广告
+
+- 模块：`modules/webtoon-adblock.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/webtoon-adblock.module`
+
+### 豌豆清单隐私保护
+
+- 模块：`modules/wandou-privacy.module`
+- Raw：`https://raw.githubusercontent.com/jax2333333/shadowrocket-config/main/modules/wandou-privacy.module`
+- 只减少广告/统计追踪，不修改会员状态或 App 内购买。
+
+### 隐私模块说明
+
+- `docs/privacy-modules.md`
+
+所有新增模块都优先采用 **自写 / 自托管 / 最小 MITM** 原则：能用 Rule/Rewrite 完成的功能不引入 JavaScript；不会调用第三方 Worker 或 API，也不会主动上传 Cookie、账号信息、Token、播放 URL 或设备密钥。
 
 ## 当前版本
 
