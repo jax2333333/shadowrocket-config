@@ -1,0 +1,31 @@
+#!name=JAX - 小红书净化
+#!desc=隐私优先自托管版：拦截广告素材、惊喜弹窗、营销盒子与部分推广入口；无第三方脚本。2026-08-30
+
+# 设计原则：
+# - 无第三方 JS / Worker。
+# - 不处理登录、私信、发布、支付等接口。
+# - 仅对 edith.xiaohongshu.com 与 www.xiaohongshu.com 做最小 MITM。
+
+[Rule]
+DOMAIN,ads-img-qc.xhscdn.com,REJECT
+DOMAIN,ads-img-al.xhscdn.com,REJECT
+DOMAIN,ads-video-al.xhscdn.com,REJECT
+DOMAIN,ads-video-qc.xhscdn.com,REJECT
+DOMAIN,t-ads.xiaohongshu.com,REJECT
+AND,((DOMAIN,edith.xiaohongshu.com),(PROTOCOL,UDP)),REJECT
+AND,((DOMAIN,www.xiaohongshu.com),(PROTOCOL,UDP)),REJECT
+
+[Map Local]
+# 惊喜弹窗
+^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/surprisebox\/(?:get_style|open|submit_action) data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+# 营销盒子
+^https?:\/\/www\.xiaohongshu\.com\/api\/marketing\/box\/trigger\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+# 部分推广/引导入口
+^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/note\/guide\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d+\/guide\/user_banner data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/www\.xiaohongshu\.com\/api\/sns\/v\d+\/ads\/resource data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% edith.xiaohongshu.com,www.xiaohongshu.com
