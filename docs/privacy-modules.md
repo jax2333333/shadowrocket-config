@@ -24,7 +24,29 @@
 
 `scripts/youtube-adblock-local.js`
 
-这是当前唯一需要自写 JS 的模块；脚本不主动联网。
+脚本不主动联网。
+
+### TikTok
+
+`modules/tiktok-clean.module`
+
+当前稳定版采用纯 Rule：
+
+- 拦截 TikTok 明确广告投放主机、广告落地页、analytics、log、mon 等统计/遥测主机
+- 不拦截视频 CDN
+- 不拦截 `mssdk`、`location`、`frontier` 等可能涉及账号安全、定位或实时通信的主机
+- **当前不启用 MITM**，因此不会解密 TikTok 登录、私信、上传、支付等核心 API
+- 无正在执行的 Script
+
+已经准备自写本地过滤器：
+
+`scripts/tiktok-clean-local.js`
+
+以及回归测试：
+
+`tests/tiktok-clean-local.test.js`
+
+本地过滤器只识别 TikTok JSON 推荐流里明确标记 `is_ads / is_ad` 的项目；不修改下载权限、地区、会员、账号状态或其他业务字段。脚本当前故意不在模块中启用，等实际连接日志确认最小 API hostname 后再决定是否启用 MITM。
 
 ### 微信公众号
 
@@ -182,8 +204,9 @@
 - 淘宝：`guide-acs.m.taobao.com`
 - 闲鱼：`acs.m.goofish.com`、`g-acs.m.goofish.com`
 
-以下新增模块不需要 MITM：
+以下新增模块当前不需要 MITM：
 
+- TikTok 稳定版
 - 微博
 - 京东
 - 通用广告
@@ -220,10 +243,11 @@
 
 1. 保留已经稳定的 YouTube 自托管模块。
 2. 安装 `general-adblock-safe.module`，先测试日常 App。
-3. 按需开启微信公众号、微博、京东这类较低风险模块。
-4. 小红书、高德、淘宝逐个开启，每开启一个测试对应 App。
-5. 闲鱼最后开启，因为它需要 MITM 两个业务核心 `acs` 主机。
-6. 番茄 / 七猫 / WEBTOON / 豌豆按实际使用需求单独开启。
+3. TikTok 先使用 `tiktok-clean.module` 的无 MITM 稳定版，确认播放、登录、评论、私信正常。
+4. 按需开启微信公众号、微博、京东这类较低风险模块。
+5. 小红书、高德、淘宝逐个开启，每开启一个测试对应 App。
+6. 闲鱼最后开启，因为它需要 MITM 两个业务核心 `acs` 主机。
+7. 番茄 / 七猫 / WEBTOON / 豌豆按实际使用需求单独开启。
 
 不要一次性启用全部模块。逐个安装、逐个测试更容易定位兼容性问题。
 
