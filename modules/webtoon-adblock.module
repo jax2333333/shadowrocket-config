@@ -1,0 +1,36 @@
+#!name=JAX - WEBTOON AdBlock
+#!desc=隐私优先自托管版：针对 WEBTOON 与常见广告 SDK 的轻量拦截；无远程脚本、无外部 Worker。2026-08-30
+
+# 相比原规则的调整：
+# - 保留 WEBTOON 广告关键词。
+# - 不再封整个 unity3d.com，避免误伤正常 Unity 内容。
+# - 不使用过宽的 is.com 规则。
+# - 不需要 MITM，不读取任何 HTTPS 正文。
+
+[Rule]
+# WEBTOON 广告域名
+DOMAIN-KEYWORD,ads-webtoon,REJECT
+DOMAIN-KEYWORD,global-ad,REJECT
+
+# Google Ads / DoubleClick
+DOMAIN-SUFFIX,googlesyndication.com,REJECT
+DOMAIN-SUFFIX,googleadservices.com,REJECT
+DOMAIN-SUFFIX,doubleclick.net,REJECT
+DOMAIN-SUFFIX,admob.com,REJECT
+
+# AppLovin / Vungle
+DOMAIN-SUFFIX,applovin.com,REJECT
+DOMAIN-SUFFIX,applvn.com,REJECT
+DOMAIN-SUFFIX,vungle.com,REJECT
+
+# Unity Ads - 不封整个 unity3d.com
+DOMAIN-KEYWORD,unityads,REJECT
+DOMAIN-SUFFIX,unityads.unity3d.com,REJECT
+
+# ironSource / LevelPlay
+DOMAIN-SUFFIX,ironsrc.com,REJECT
+DOMAIN-SUFFIX,supersonicads.com,REJECT
+
+# Mintegral / MBridge
+DOMAIN-SUFFIX,mbridge.com,REJECT
+DOMAIN-SUFFIX,mintegral.com,REJECT
