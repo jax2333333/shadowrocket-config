@@ -1,0 +1,30 @@
+#!name=JAX - 淘宝净化
+#!desc=隐私优先自托管版：拦截淘宝广告投放/统计域名与部分开屏营销配置；不 MITM acs.m.taobao.com 核心接口。2026-08-30
+
+# 设计原则：
+# - 无第三方 JS / Worker。
+# - 不读取 Cookie、订单、支付、账号信息。
+# - 避免 MITM acs.m.taobao.com，只处理广告专用域名和 guide-acs 开屏接口。
+
+[Rule]
+DOMAIN,apoll.m.taobao.com,REJECT
+DOMAIN,h-adashx.ut.taobao.com,REJECT
+DOMAIN,tunion-api.m.taobao.com,REJECT
+DOMAIN,dsp.simba.taobao.com,REJECT
+DOMAIN,m.simba.taobao.com,REJECT
+DOMAIN,mclick.simba.taobao.com,REJECT
+DOMAIN,redirect.simba.taobao.com,REJECT
+DOMAIN,stat.simba.taobao.com,REJECT
+DOMAIN,adashxgc.ut.taobao.com,REJECT
+DOMAIN,adashbc.ut.taobao.com,REJECT
+DOMAIN,m-adash.m.taobao.com,REJECT
+DOMAIN,adashbc.m.taobao.com,REJECT
+DOMAIN,poplayer.template.alibaba.com,REJECT
+AND,((DOMAIN,guide-acs.m.taobao.com),(PROTOCOL,UDP)),REJECT
+
+[Map Local]
+# 首页/开屏营销配置，仅处理 guide-acs，不解密淘宝核心 acs 主机
+^https?:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.wireless\.home\.(?:splash|newface)\.awesome\.get data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% guide-acs.m.taobao.com
