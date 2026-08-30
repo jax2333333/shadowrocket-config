@@ -5,7 +5,7 @@
 # - 不使用远程 JS。
 # - 不读取 Cookie / Header / 账号信息。
 # - 不使用持久化存储。
-# - 避免拦截整个 bytedance.com / snssdk.com，降低误伤抖音、TikTok 和番茄核心接口的概率。
+# - 避免拦截或 MITM 整个 bytedance.com / snssdk.com / pstatp.com，降低误伤和隐私暴露面。
 
 [Rule]
 DOMAIN,p6-ad-sign.byteimg.com,REJECT
@@ -21,10 +21,9 @@ DOMAIN,adim.pinduoduo.com,REJECT
 
 [URL Rewrite]
 ^https?:\/\/[^/]+\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/sdk\/(?:get_ads|stats|settings)\/ - reject
-^https?:\/\/[^/]+\.(?:pglstatp-toutiao|pstatp)\.com\/(?:obj|img)\/(?:ad-app-package|ad)\/ - reject
-^https?:\/\/[^/]+\.(?:pglstatp-toutiao|pstatp)\.com\/obj\/ad-pattern\/renderer - reject
-^https?:\/\/[^/]+\.snssdk\.com\/api\/ad\/ - reject
+^https?:\/\/[^/]+\.pglstatp-toutiao\.com\/(?:obj|img)\/(?:ad-app-package|ad)\/ - reject
+^https?:\/\/[^/]+\.pglstatp-toutiao\.com\/obj\/ad-pattern\/renderer - reject
 ^https?:\/\/adim\.pinduoduo\.com\/.+\/toutiao\? - reject
 
 [MITM]
-hostname = %APPEND% *.pangolin-sdk-toutiao.com,*.pglstatp-toutiao.com,*.pstatp.com,*.snssdk.com,adim.pinduoduo.com
+hostname = %APPEND% *.pangolin-sdk-toutiao.com,*.pglstatp-toutiao.com,adim.pinduoduo.com
