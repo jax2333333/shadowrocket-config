@@ -1,0 +1,19 @@
+#!name=JAX - 京东净化
+#!desc=隐私优先轻量版：拦截京东广告投放与统计专用域名；纯规则、无 MITM、无第三方脚本。2026-08-30
+
+# 设计原则：
+# - 不 MITM api.m.jd.com，避免扩大订单、账号等核心 API 的本机解密范围。
+# - 不拦截 dns.jd.com，不影响京东自己的网络调度。
+# - 不修改会员、价格、订单或支付数据。
+
+[Rule]
+DOMAIN-SUFFIX,jzt.jd.com,REJECT
+DOMAIN-SUFFIX,img-x.jd.com,REJECT
+DOMAIN-SUFFIX,du.jd.com,REJECT
+DOMAIN-SUFFIX,c-nfa.jd.com,REJECT
+DOMAIN-SUFFIX,cm.jd.com,REJECT
+DOMAIN-SUFFIX,bdsp.x.jd.com,REJECT
+DOMAIN-SUFFIX,ad.3.cn,REJECT
+DOMAIN-SUFFIX,jd.c-ptsp.com.cn,REJECT
+DOMAIN,dsp-x.jd.com,REJECT
+DOMAIN,bdsp-x.jd.com,REJECT
